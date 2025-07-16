@@ -138,9 +138,14 @@ export function useTypingGame({ text }: UseTypingGameProps) {
       
       if (gameState.status === "waiting" && isValidTypingKey(event.key)) {
         startGame();
-      }
-      
-      if (gameState.status === "active") {
+        handleKeyPress({
+          key: event.key,
+          timestamp: Date.now(),
+          isCorrect: event.key === gameState.characters[gameState.currentIndex]?.char,
+          expectedChar: gameState.characters[gameState.currentIndex]?.char ?? "",
+          actualChar: event.key,
+        });
+      } else if (gameState.status === "active") {
         handleKeyPress({
           key: event.key,
           timestamp: Date.now(),
