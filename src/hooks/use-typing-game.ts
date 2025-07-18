@@ -155,6 +155,27 @@ export function useTypingGame({ text }: UseTypingGameProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [gameState.status, gameState.currentIndex, gameState.characters, startGame, handleKeyPress]);
 
+  useEffect(() => {
+    if (gameState.status !== "active" || !gameState.startTime) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setGameState(prev => {
+        if (prev.status !== "active" || !prev.startTime) {
+          return prev;
+        }
+        
+        return {
+          ...prev,
+          stats: calculateStats(prev.characters, prev.currentIndex, prev.startTime)
+        };
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [gameState.status, gameState.startTime]);
+
   return {
     gameState,
     startGame,
