@@ -137,7 +137,22 @@ export function useTypingGame({ text }: UseTypingGameProps) {
       }
       
       if (gameState.status === "waiting" && isValidTypingKey(event.key)) {
+        // Start the game and immediately process the first keystroke
         startGame();
+        
+        const keystrokeEvent: KeystrokeEvent = {
+          key: event.key,
+          timestamp: Date.now(),
+          isCorrect: event.key === gameState.characters[gameState.currentIndex]?.char,
+          expectedChar: gameState.characters[gameState.currentIndex]?.char ?? "",
+          actualChar: event.key,
+        };
+        
+        setTimeout(() => {
+          handleKeyPress(keystrokeEvent);
+        }, 0);
+        
+        return;
       }
       
       if (gameState.status === "active") {
